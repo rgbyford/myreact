@@ -2,6 +2,9 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 //import ReactDOM from "react-dom";
+//    backgroundColor: "#E0FFE0",
+//    height: 100,
+//    height: window.innerHeight
 
 const styles = {
   heading: {
@@ -11,6 +14,10 @@ const styles = {
     fontSize: "1.2rem",
     color: "white",
     padding: "0 20px"
+  },
+  bodyStyle: {
+    backgroundImage: `url(../assets/images/oriental.png)`,
+    margin:-10
   },
   content: {
     padding: 20
@@ -31,15 +38,17 @@ const styles = {
     },
     // The modal "window"
     modalStyle: {
-      backgroundColor: '#fff',
+      backgroundColor: '#FFF',
       borderRadius: 5,
       maxWidth: 500,
       minHeight: 300,
-      margin: '0 auto',
-      padding: 30
+      padding: 30,
+      display: "flex",
+      justifyContent: "center"
     }
 };
 
+//  <div style={{display: "flex", justifyContent: "center"}}   >
 //let sNumString1 = "./assets/images/1.jpg";
 //let sNumString3 = "./assets/images/3.jpg";
 let iImages = 12;
@@ -47,58 +56,109 @@ let iImages = 12;
 let asStrings = [];
 let abAlreadyClicked = [];
 let aiFindClicked = [];
-  
+let iDiff = 6;
+let iClickedCount = 0;
+let iBestScore = 0;
+
 for (let i = 0; i < iImages; i++) {
   asStrings[i] = `./assets/images/${i +1}.jpg`;    // images numbered from 1
-  aiFindClicked[i] = i;
+  aiFindClicked[i] = i + 1;
   abAlreadyClicked[i] = false;
 }    
 
+class Difficulty extends React.Component {
+  constructor(props) {
+    super (props);
+    this.state = {iDifficulty: 6};
+    this.diffChange = this.diffChange.bind(this);
+  }
+  
+  NumberList() {
+    const numbers = [6, 7, 8, 9, 10, 11, 12];
+    return (
+      numbers.map((number) =>
+        <option key={number.toString()} value={number}>{number}</option>
+      )
+    )
+  }
+
+  diffChange (param) {
+    console.log("p: ", param);
+    iDiff = param;
+    this.setState({
+      iDifficulty: param
+    });
+ 
+  }
+      //<select value="difficulty" onChange={(e) => this.diffChange.bind(this, e.target.value)}></select>
+  render() {
+//    console.log ("diffSel");
+    return (
+      <div>
+      <h3>&nbsp;How many do you want to have to click on to win?&nbsp;&nbsp;
+      <select value={this.state.iDifficulty} onChange={(e) => this.diffChange(e.target.value)}>{this.NumberList()}</select>
+      </h3>
+      <h3>&nbsp;Your score: {iClickedCount}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Best score: {iBestScore}</h3>
+      </div>  
+    );
+  }
+}
 
 class ClickButton extends React.Component {
   constructor(props) {
     super(props);
-//    this.state = {sNumString: sNumString1};
-    this.state = { isOpen: false, bLose: false};
+    //    this.state = {sNumString: sNumString1};
+    this.state = { isOpen: false, bLose: false };
 
     // This binding is necessary to make `this` work in the callback
     this.handleClick = this.handleClick.bind(this);
   }
 
-toggleModal = (sLoseWin) => {
-  this.setState({
-    sLoseWin: sLoseWin,
-    isOpen: !this.state.isOpen
-  });
-}
-
-
-handleClick(param) {
-  let aiNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-    console.log ("p: ", param);  // the number of the button
-    let iClicked = aiFindClicked[param];  // picture num
-    console.log ("picture num: ", iClicked);
-    console.log ("already been clicked: ", abAlreadyClicked);
-    let iClickedCount = abAlreadyClicked.filter(c => c === true).length;
-    console.log ("how many clicked: ", iClickedCount);
-    if (abAlreadyClicked[iClicked]) {  // this picture already clicked
-      console.log ("Lost!");  
-      this.toggleModal("You lose!  Boo!");
+  toggleModal = (sLoseWin) => {
+    if (this.state.isOpen) {
+      iClickedCount = 0;
+      for (let i = 0; i < iImages; i++) {
+        asStrings[i] = `./assets/images/${i +1}.jpg`;    // images numbered from 1
+        aiFindClicked[i] = i + 1;
+        abAlreadyClicked[i] = false;
+      }    
     }
-    else if (iClickedCount > 5) {
-      console.log ("Won");
+    this.setState({
+      sLoseWin: sLoseWin,
+      isOpen: !this.state.isOpen
+    });
+  }
+
+
+  handleClick(param) {
+    let aiNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+    console.log("p: ", param);  // the number of the button
+    console.log ("aiFC: ", aiFindClicked);
+    let iClicked = aiFindClicked[param];  // picture num
+    console.log("picture num: ", iClicked);
+    console.log("already been clicked: ", abAlreadyClicked);
+    iClickedCount = abAlreadyClicked.filter(c => c === true).length + 1;
+    console.log("how many clicked: ", iClickedCount);
+    if (abAlreadyClicked[iClicked]) {  // this picture already clicked
+      console.log("Lost!");
+      this.toggleModal("You lose!  Boo!");
+      iBestScore = Math.max (iBestScore, iClickedCount);
+    }
+    else if (iClickedCount >= iDiff) {
+      console.log("Won");
       this.toggleModal("You win!  Yay!");
+      iBestScore = Math.max (iBestScore, iClickedCount);
     }
     abAlreadyClicked[iClicked] = true;
-    
+
     let iChooser;
     let iNumsLeft = iImages;
     for (let i = 0; i < iImages; i++) {
       iChooser = Math.floor(Math.random() * iNumsLeft);
-      console.log("random: ", aiNumbers[iChooser]);
+//      console.log("random: ", aiNumbers[iChooser]);
       asStrings[i] = `./assets/images/${aiNumbers[iChooser]}.jpg`;
-//      console.log (asStrings[i]);
+      //      console.log (asStrings[i]);
       aiFindClicked[i] = aiNumbers[iChooser];
       aiNumbers.splice(iChooser, 1);
       //      console.log(aiNumbers);
@@ -107,23 +167,25 @@ handleClick(param) {
     }
     //console.log(this);
     this.setState(() => ({
-//      sNumString: asStrings
+      //      sNumString: asStrings
     }));
   }
 
         // <button onClick={this.toggleModal}>
         //   Open the modal
         // </button>
-
         
-        render() {    
-          console.log ("cb render");
+        render() {
+//          console.log("cb render");
           return (
+            <body style={styles.bodyStyle}>
             <div>
-            <Modal show={this.state.isOpen}
-              onClose={this.toggleModal}>
-            <input type="text" readOnly value={this.state.sLoseWin}/>
-            </Modal>
+              <br/>
+              <h3>&nbsp;Click on the pictures of Paige.  But don't click on the same one twice!</h3>
+            <div>
+              <Difficulty />
+            </div>
+      <div>
       <img className="images" id="pic1" onClick={this.handleClick.bind(this, 0)} alt="" style={styles.imgResponsive} src={asStrings[0]}/>
       <img className="images" id="pic2" onClick={this.handleClick.bind(this, 1)} alt="" style={styles.imgResponsive} src={asStrings[1]}/>
       <img className="images" id="pic3" onClick={this.handleClick.bind(this, 2)} alt="" style={styles.imgResponsive} src={asStrings[2]}/>
@@ -137,17 +199,26 @@ handleClick(param) {
       <img className="images" id="pic11" onClick={this.handleClick.bind(this, 10)} alt="" style={styles.imgResponsive} src={asStrings[10]}/>
       <img className="images" id="pic12" onClick={this.handleClick.bind(this, 11)} alt="" style={styles.imgResponsive} src={asStrings[11]}/>
       </div>
+      <div>
+
+              <Modal show={this.state.isOpen} onClose={this.toggleModal}>
+              <h3>{this.state.sLoseWin}</h3>
+              </Modal>
+              </div>
+              </div>
+              </body>
     );
   }
 }
 
+//   <input type="text" readOnly value={this.state.sLoseWin} />
 
 class Modal extends React.Component {
   render() {
     // Render nothing if the "show" prop is false
-    console.log ("renderModal");
+//    console.log ("renderModal");
     if(!this.props.show) {
-      console.log ("no show");
+//      console.log ("no show");
       return null;
     }
 
@@ -155,7 +226,6 @@ class Modal extends React.Component {
       <div className="backdrop" style={styles.backdropStyle}>
         <div className="modal" style={styles.modalStyle}>
           {this.props.children}
-
           <div className="footer">
             <button onClick={this.props.onClose}>
               Close
@@ -186,7 +256,7 @@ function JSXVariables() {
       <div id="outer"></div>
       <div id="pictures">
       <div className="row">
-      <ClickButton />
+            <ClickButton />
       </div>
       </div>
       </div>
