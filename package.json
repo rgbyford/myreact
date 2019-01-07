@@ -2,7 +2,7 @@
   "name": "myreact",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://rgbyford.github.com/myreact",
+  "homepage": "./myreact",
   "dependencies": {
     "babel-loader": "^8.0.5",
     "d3-array": "^2.0.3",
