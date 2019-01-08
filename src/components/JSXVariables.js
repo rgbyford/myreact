@@ -1,11 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-//import ReactDOM from "react-dom";
-//    backgroundColor: "#E0FFE0",
-//    height: 100,
-//    height: window.innerHeight
-
 const styles = {
   heading: {
     blackground: "#3f51bl5",
@@ -45,6 +40,11 @@ const styles = {
       padding: 30,
       display: "flex",
       justifyContent: "center"
+    },
+    closeButton: {
+      position: "absolute",
+      top: 300,
+      left: 300
     }
 };
 
@@ -178,10 +178,9 @@ class ClickButton extends React.Component {
         render() {
 //          console.log("cb render");
           return (
-            <body style={styles.bodyStyle}>
             <div>
               <br/>
-              <h3>&nbsp;Click on the pictures of Paige.  But don't click on the same one twice!</h3>
+              <h3>&nbsp;Click on the pictures of London.  But don't click on the same one twice!</h3>
             <div>
               <Difficulty />
             </div>
@@ -201,12 +200,15 @@ class ClickButton extends React.Component {
       </div>
       <div>
 
-              <Modal show={this.state.isOpen} onClose={this.toggleModal}>
+              <Modal show={this.state.isOpen}>
               <h3>{this.state.sLoseWin}</h3>
+              <button style={styles.closeButton} onClick={this.toggleModal}>
+              Close
+            </button>
+
               </Modal>
               </div>
               </div>
-              </body>
     );
   }
 }
@@ -227,9 +229,6 @@ class Modal extends React.Component {
         <div className="modal" style={styles.modalStyle}>
           {this.props.children}
           <div className="footer">
-            <button onClick={this.props.onClose}>
-              Close
-            </button>
           </div>
         </div>
       </div>
@@ -251,6 +250,8 @@ function JSXVariables() {
   };
 
   return (
+  <body style={styles.bodyStyle}>
+
   <div className="mainContainer">
       <div className="container">
       <div id="outer"></div>
@@ -261,6 +262,7 @@ function JSXVariables() {
       </div>
       </div>
   </div>
+  </body>
   );
 }
 
