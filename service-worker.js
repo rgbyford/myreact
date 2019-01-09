@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "tobycontacts.ddns.net/myreact/precache-manifest.1f06dc515a4ebcf24770b24bfe92c68f.js"
+  "tobycontacts.ddns.net/precache-manifest.b081e6f8bb0740457232022d6635d1d0.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("tobycontacts.ddns.net/myreact/index.html", {
+workbox.routing.registerNavigationRoute("tobycontacts.ddns.net/index.html", {
   
   blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
 });
